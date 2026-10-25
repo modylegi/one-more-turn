@@ -43,3 +43,9 @@ test('snapshots do not share mutable mine state',()=>{
   const s=G.create(id,1000), snapshot=G.snapshot(s);
   G.dig(s,1001);assert.equal(snapshot.mines[0].hits,0);
 });
+test('snapshot timestamps cannot produce a negative duration immediately after a transition',()=>{
+  const s=G.create(id,1000);for(let i=0;i<12;i++)G.dig(s,1001+i);
+  s.activeMs=100.2;G.move(s,1100);
+  const snapshot=G.snapshot(s);
+  assert.ok(snapshot.activeMs>=snapshot.mines[1].enteredMs);
+});

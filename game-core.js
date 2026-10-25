@@ -61,7 +61,9 @@
       wallet: s.wallet, earned: s.earned, hits: s.hits, switches: s.switches,
       extraHits: s.mines.reduce((n, m) => n + m.extraHits, 0),
       missedCoins: s.mines.reduce((n, m) => n + m.missedCoins, 0),
-      mines: JSON.parse(JSON.stringify(s.mines)) };
+      mines: s.mines.map(m => ({ ...m, enteredMs: Math.round(m.enteredMs),
+        leftMs: m.leftMs === null ? null : Math.round(m.leftMs),
+        betterAtMs: m.betterAtMs === null ? null : Math.round(m.betterAtMs) })) };
   }
   return { VERSION, COSTS, create, current, income, nextAvailable, better, record, tick, dig, upgrade, move, finish, snapshot };
 });
