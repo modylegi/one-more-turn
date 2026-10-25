@@ -96,15 +96,10 @@
     persist(); render(); delivery.flush();
   }));
   document.addEventListener('keydown', event => {
-    if (event.code === 'Space' && !event.repeat && state?.status === 'playing' && !$('rules').open &&
+    if (event.code === 'Space' && !event.repeat && state?.status === 'playing' &&
         !event.target.closest('button,input,textarea,select,a')) { event.preventDefault(); dig(); }
   });
-  $('rules-open').addEventListener('click', () => $('rules').showModal());
-  ['rules-close', 'rules-ok'].forEach(id => $(id).addEventListener('click', () => $('rules').close()));
   $('retry').addEventListener('click', () => delivery.flush());
-  document.querySelector('.brand').addEventListener('click', event => {
-    if (state) { event.preventDefault(); $('rules').showModal(); }
-  });
   document.addEventListener('visibilitychange', () => {
     lastTick = performance.now();
     if (playingNow && state?.status === 'playing') { G.record(state, document.hidden ? 'hidden' : 'visible', Date.now()); persist(); }

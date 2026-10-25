@@ -20,14 +20,18 @@
   </svg>
   <header class="topbar">
     <a href="./" class="brand" aria-label="Ещё один ход, главная"><span class="brand-icon"><svg><use href="#gem"/></svg></span><span>Ещё один ход<span class="brand-caption">маленькая экспедиция</span></span></a>
-    <div class="header-right"><span id="preview-label" class="preview-label" hidden>Предпросмотр</span><button id="rules-open" class="text-button">Как играть <span aria-hidden="true">↗</span></button></div>
+    <span id="preview-label" class="preview-label" hidden>Предпросмотр</span>
   </header>
   <main>
     <section id="intro" class="intro">
-      <div class="intro-copy"><p class="eyebrow"><span></span> ШАХТА ЖДЁТ</p>
-        <h1>Ещё немного<br>вглубь.</h1>
-        <p class="lead">Найди свою жилу. Обустрой шахту.<br>Реши, когда пора двигаться дальше.</p>
-        <div class="intro-steps"><p><span>01</span> Добывай руду и получай монеты</p><p><span>02</span> Улучшай оборудование или меняй шахту</p><p><span>03</span> Завершай экспедицию в любой момент</p></div>
+      <div class="intro-copy">
+        <h1>Как играть</h1>
+        <div class="intro-rules">
+          <p>Нажимай «Добывать» или пробел. Каждый удар приносит указанное число монет. Один удар занимает одинаковое время в любой шахте.</p>
+          <p>Улучшения покупаются за монеты и увеличивают доход текущей шахты. По мере добычи жила истощается.</p>
+          <p>После 12 ударов можно бесплатно перейти на новый участок. Монеты сохраняются, оборудование остаётся в прежней шахте. Вернуться к старому участку нельзя.</p>
+          <p>Обязательной цели и финального приза нет. Нажми «Закончить экспедицию», когда захочешь остановиться. Время в скрытой вкладке не учитывается.</p>
+        </div>
         <button id="start" class="primary start-button">Начать экспедицию <svg><use href="#arrow"/></svg></button>
         <p id="availability" class="availability" role="status"></p>
         <p class="consent">Учебное исследование решений. При старте ты соглашаешься на сохранение игровых действий и времени без имени и почты. Можно закончить в любой момент. Одна сессия длится не больше 15 минут активного времени.</p>
@@ -62,6 +66,5 @@
     </section>
   </main>
   <footer><span>ЕЩЁ ОДИН ХОД <span class="footer-separator">/</span> 2026</span><span>Исследуй. Выбирай. Двигайся дальше.</span></footer>
-  <dialog id="rules"><button id="rules-close" class="dialog-close" aria-label="Закрыть правила">×</button><p class="eyebrow">КАК ИГРАТЬ</p><h2>Простые правила.</h2><p>Нажимай «Добывать» или пробел. Каждый удар приносит указанное число монет. Один удар занимает одинаковое время в любой шахте.</p><p>Улучшения покупаются за монеты и увеличивают доход текущей шахты. По мере добычи жила истощается.</p><p>После 12 ударов можно бесплатно перейти на новый участок. Монеты сохраняются, оборудование остаётся в прежней шахте. Вернуться к старому участку нельзя.</p><p>Обязательной цели и финального приза нет. Нажми «Закончить экспедицию», когда захочешь остановиться. Время в скрытой вкладке не учитывается.</p><button id="rules-ok" class="primary">Понятно</button></dialog>
   <noscript><p class="noscript">Для игры нужно включить JavaScript в браузере.</p></noscript>
 </body></html>
