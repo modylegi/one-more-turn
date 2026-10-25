@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#163e3b">
+  <meta name="description" content="Небольшая игра про шахты, находки и решения. Выбирайте свой темп.">
+  <title>Ещё один ход — маленькая экспедиция</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="config.js"></script><script defer src="game-core.js"></script>
+  <script defer src="transport.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="gem" viewBox="0 0 24 24"><path d="M5 3h14l4 7-11 12L1 10zM1 10h22M5 3l3 7 4 12 4-12 3-7M8 10l4-7 4 7"/></symbol>
+    <symbol id="pick" viewBox="0 0 24 24"><path d="m4 21 12-12M9 3c6-2 11 1 12 7-4-4-7-5-12-7ZM14 7l4 4M3 19l2 2"/></symbol>
+    <symbol id="coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10m3-8c-4-3-8 3-3 3s1 6-3 3"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol>
+  </svg>
+  <header class="topbar">
+    <a href="./" class="brand" aria-label="Ещё один ход, главная"><span class="brand-icon"><svg><use href="#gem"/></svg></span><span>Ещё один ход<span class="brand-caption">маленькая экспедиция</span></span></a>
+    <div class="header-right"><span id="preview-label" class="preview-label" hidden>Предпросмотр</span><button id="rules-open" class="text-button">Как играть <span aria-hidden="true">↗</span></button></div>
+  </header>
+  <main>
+    <section id="intro" class="intro">
+      <div class="intro-copy"><p class="eyebrow"><span></span> ШАХТА ЖДЁТ</p>
+        <h1>Ещё немного<br>вглубь.</h1>
+        <p class="lead">Найди свою жилу. Обустрой шахту.<br>Реши, когда пора двигаться дальше.</p>
+        <div class="intro-steps"><p><span>01</span> Добывай руду и получай монеты</p><p><span>02</span> Улучшай оборудование или меняй шахту</p><p><span>03</span> Завершай экспедицию в любой момент</p></div>
+        <button id="start" class="primary start-button">Начать экспедицию <svg><use href="#arrow"/></svg></button>
+        <p id="availability" class="availability" role="status"></p>
+        <p class="consent">Учебное исследование решений. При старте ты соглашаешься на сохранение игровых действий и времени без имени и почты. Можно закончить в любой момент. Одна сессия длится не больше 15 минут активного времени.</p>
+      </div>
+      <div class="intro-art"><div class="art-label"><span class="tiny-dot"></span> МЕДНАЯ ЛОЩИНА <span>№ 01</span></div><img src="mine.svg" alt="Небольшая шахта с медными кристаллами, деревянным входом и вагонеткой"><div class="art-foot"><span>Никакой спешки.<br><strong>Твой темп. Твой маршрут.</strong></span><svg><use href="#gem"/></svg></div></div>
+    </section>
+    <section id="game" class="game" hidden>
+      <div class="game-heading"><div><p class="eyebrow">ТВОЯ ЭКСПЕДИЦИЯ</p><h1 id="mine-name">Медная лощина</h1></div>
+        <div class="stats"><div class="stat"><svg><use href="#coin"/></svg><span><strong id="wallet">0</strong><small>монет</small></span></div><div class="stat timer"><svg><use href="#clock"/></svg><span><strong id="timer">00:00</strong><small>в игре</small></span></div></div>
+      </div>
+      <div class="game-grid">
+        <div class="mine-card">
+          <div class="mine-card-top"><span id="mine-number" class="mine-number">УЧАСТОК 01</span><span class="condition"><i></i><span id="condition">Богатая жила</span></span></div>
+          <div id="scene" class="scene"><img src="mine.svg" alt="Текущая шахта"><div id="floats" aria-hidden="true"></div><span class="scene-badge" id="equipment-badge">Ручная добыча</span></div>
+          <div class="mine-action"><div><span class="muted-label">СЕЙЧАС ЗА УДАР</span><p class="yield"><span id="yield">6</span> <span>монет</span></p></div><button id="dig" class="primary dig-button"><svg><use href="#pick"/></svg> Добывать <span class="keycap">␣</span></button></div>
+          <div class="vein"><div class="vein-track"><span id="vein-fill"></span></div><p id="vein-note">Здесь ещё много руды.</p></div>
+        </div>
+        <aside class="sidebar">
+          <section class="equipment card"><p class="eyebrow">ОБОРУДОВАНИЕ</p><div class="equipment-heading"><span class="equipment-icon"><svg><use href="#pick"/></svg></span><div><h2 id="upgrade-title">Стальная кирка</h2><span id="upgrade-level">Улучшение 1 из 3</span></div></div><p id="upgrade-description">Ещё +1 монета за каждый удар в этой шахте.</p><button id="upgrade" class="secondary"><span>Улучшить</span><span id="upgrade-cost">18 ◈</span></button><p class="fineprint">Оборудование остаётся на этом участке. Доходность слева уже учитывает улучшения.</p></section>
+          <section id="next-card" class="next-card card"><p class="eyebrow">ВПЕРЕДИ НОВЫЙ УЧАСТОК</p><h2 id="next-name">Тихий грот</h2><p id="next-copy">Разведка откроет следующий участок после 12 ударов.</p><div class="next-yield"><strong>6</strong><span>монет за удар<br>на новом участке</span></div><button id="move" class="secondary" disabled><span>Перейти бесплатно</span><svg><use href="#arrow"/></svg></button><p class="fineprint">Монеты сохраняются. В новой шахте начинаешь с ручного инструмента.</p></section>
+          <button id="finish" class="finish-button">Закончить экспедицию <span aria-hidden="true">↗</span></button>
+        </aside>
+      </div>
+      <p class="play-note">У каждой жилы свой запас. Доход меняется только от добычи и улучшений. Скрытых наград нет.</p>
+      <div id="live" class="sr-only" role="status" aria-live="polite"></div>
+    </section>
+    <section id="result" class="result" hidden>
+      <div class="result-icon"><svg><use href="#gem"/></svg></div><p class="eyebrow">ЭКСПЕДИЦИЯ ЗАВЕРШЕНА</p><h1>Спасибо за игру.</h1><p id="result-copy" class="lead">Сегодня здесь стало немного светлее.</p>
+      <div class="result-score"><svg><use href="#coin"/></svg><strong id="result-coins">0</strong><span>монет в рюкзаке</span></div>
+      <fieldset id="reason-field"><legend>Что повлияло на решение закончить? <small>Необязательно</small></legend><div class="reason-options"><button data-reason="enough">Наигрался</button><button data-reason="bored">Стало скучно</button><button data-reason="time">Пора идти</button><button data-reason="other">Другая причина</button></div></fieldset>
+      <p id="sync-status" class="sync-status" role="status"></p><button id="retry" class="text-button" hidden>Повторить отправку</button><p class="result-footnote">Можно закрыть страницу. Спасибо за участие в исследовании.</p>
+    </section>
+  </main>
+  <footer><span>ЕЩЁ ОДИН ХОД <span class="footer-separator">/</span> 2026</span><span>Исследуй. Выбирай. Двигайся дальше.</span></footer>
+  <dialog id="rules"><button id="rules-close" class="dialog-close" aria-label="Закрыть правила">×</button><p class="eyebrow">КАК ИГРАТЬ</p><h2>Простые правила.</h2><p>Нажимай «Добывать» или пробел. Каждый удар приносит указанное число монет. Один удар занимает одинаковое время в любой шахте.</p><p>Улучшения покупаются за монеты и увеличивают доход текущей шахты. По мере добычи жила истощается.</p><p>После 12 ударов можно бесплатно перейти на новый участок. Монеты сохраняются, оборудование остаётся в прежней шахте. Вернуться к старому участку нельзя.</p><p>Обязательной цели и финального приза нет. Нажми «Закончить экспедицию», когда захочешь остановиться. Время в скрытой вкладке не учитывается.</p><button id="rules-ok" class="primary">Понятно</button></dialog>
+  <noscript><p class="noscript">Для игры нужно включить JavaScript в браузере.</p></noscript>
+</body></html>
