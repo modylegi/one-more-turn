@@ -20,12 +20,13 @@
   }
   class Delivery {
     constructor(config, getState, onStatus) {
+      this.key = config.storageKey || KEY;
       this.config = config; this.getState = getState; this.onStatus = onStatus; this.busy = false;
-      try { this.data = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { this.data = {}; }
+      try { this.data = JSON.parse(localStorage.getItem(this.key)) || {}; } catch { this.data = {}; }
       this.data.token ||= randomToken(); this.data.rev ||= 0; this.data.cursor ||= 0;
       this.save();
     }
-    save() { try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch { /* Keep in-memory queue. */ } }
+    save() { try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch { /* Keep in-memory queue. */ } }
     enabled() { return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(this.config.endpoint); }
     async ready() {
       if (!this.enabled()) return false;

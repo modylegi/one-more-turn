@@ -36,3 +36,17 @@ test('reload retains unacknowledged request and idempotency identifiers',async()
   assert.equal(JSON.stringify(restored.data.pending),JSON.stringify(sent[0]));
   server.revision=1;await restored.flush();assert.equal(restored.data.cursor,1);
 });
+
+test('map delivery keeps a separate queue and does not replace old pending data',async()=>{
+  const {delivery,ctx,state,store}=fixture();
+  await delivery.flush();
+  const original=store.get('omt-delivery-v1');
+  const mapDelivery=new ctx.MineDelivery({
+    endpoint:'https://script.google.com/macros/s/test/exec',studyId:'one-more-turn-v1',
+    storageKey:'omt-map-delivery-v2'
+  },()=>state,()=>{});
+  await mapDelivery.flush();
+  assert.equal(store.get('omt-delivery-v1'),original);
+  assert.ok(store.has('omt-map-delivery-v2'));
+  assert.notEqual(mapDelivery.data.token,delivery.data.token);
+});

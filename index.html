@@ -6,9 +6,9 @@
   <meta name="description" content="Небольшая игра про шахты, находки и решения. Выбирайте свой темп.">
   <title>Ещё один ход — маленькая экспедиция</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20261025-rules">
-  <script defer src="config.js"></script><script defer src="game-core.js"></script>
-  <script defer src="transport.js"></script><script defer src="app.js?v=20261025-rules"></script>
+  <link rel="stylesheet" href="styles.css?v=20261027-map">
+  <script defer src="config.js?v=20261027-map"></script><script defer src="game-core.js?v=20261027-map"></script>
+  <script defer src="map-core.js?v=20261027-map"></script><script defer src="transport.js?v=20261027-map"></script><script defer src="app.js?v=20261027-map"></script>
 </head>
 <body>
   <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -17,6 +17,13 @@
     <symbol id="coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10m3-8c-4-3-8 3-3 3s1 6-3 3"/></symbol>
     <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
     <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="crystal" viewBox="0 0 24 24"><path d="m8 2 7 3 5 12-10 5-7-7z"/><path d="m8 2 2 20M8 2l7 3-5 17M3 15l7 7 10-5" /></symbol>
+    <symbol id="ore" viewBox="0 0 24 24"><path d="m3 14 3-8 7-3 7 6 1 9-10 3z"/><path d="m6 6 6 5 8-2m-8 2-1 10m1-10-9 3"/></symbol>
+    <symbol id="stone" viewBox="0 0 24 24"><path d="m4 16 4-6 6 1 5 6-3 3H7zM14 5l2-2 3 3M4 5h2"/></symbol>
+    <symbol id="rock" viewBox="0 0 24 24"><path d="m2 16 5-10 8-3 7 10-4 8H6zM7 6l6 7 2-10m-2 10 5 8M2 16l11-3"/><path d="m13 13 9 0"/></symbol>
+    <symbol id="cart" viewBox="0 0 24 24"><path d="M3 7h18l-3 10H6zM1 21h22M8 7l2-4 5 1 3 3"/><circle cx="8" cy="18" r="1.5"/><circle cx="17" cy="18" r="1.5"/></symbol>
+    <symbol id="lamp" viewBox="0 0 24 24"><path d="M9 5V3h6v2M7 8h10l2 12H5zM7 8l2-3h6l2 3M9 11v5m6-5v5M3 20h18"/></symbol>
+    <symbol id="drill" viewBox="0 0 24 24"><path d="M4 5h13v8H4zM17 7h4v4h-4M7 13v7h5v-7M3 9h14M7 2v3m6-3v3"/></symbol>
   </svg>
   <header class="topbar">
     <a href="./" class="brand" aria-label="Ещё один ход, главная"><span class="brand-icon"><svg><use href="#gem"/></svg></span><span>Ещё один ход<span class="brand-caption">маленькая экспедиция</span></span></a>
@@ -27,35 +34,49 @@
       <div class="intro-copy">
         <h1>Как играть</h1>
         <div class="intro-rules">
-          <p>Нажимай «Добывать» или пробел. Каждый удар приносит указанное число монет. Один удар занимает одинаковое время в любой шахте.</p>
-          <p>Улучшения покупаются за монеты и увеличивают доход текущей шахты. По мере добычи жила истощается.</p>
-          <p>После 12 ударов можно бесплатно перейти на новый участок. Монеты сохраняются, оборудование остаётся в прежней шахте. Вернуться к старому участку нельзя.</p>
-          <p>Обязательной цели и финального приза нет. Нажми «Закончить экспедицию», когда захочешь остановиться. Время в скрытой вкладке не учитывается.</p>
+          <p>Прокладывай путь по карте: нажимай на клетки с золотой рамкой рядом с открытым проходом. Число на клетке — монеты за её добычу. Выбирай, к каким залежам идти.</p>
+          <p>Улучшай инструменты за монеты: они открывают завалы и увеличивают доход от руды и кристаллов. По мере раскопок ценность находок уменьшается.</p>
+          <p>После 12 раскопанных клеток доступна новая шахта. Монеты переедут с тобой, а инструменты и проложенные пути останутся здесь. Вернуться нельзя.</p>
+          <p>Можно исследовать новые шахты или закончить в любой момент. Финального приза нет. На клавиатуре: стрелки — выбор клетки, Enter или пробел — добыча.</p>
         </div>
         <button id="start" class="primary start-button">Начать экспедицию <svg><use href="#arrow"/></svg></button>
         <p id="availability" class="availability" role="status"></p>
         <p class="consent">Учебное исследование решений. При старте ты соглашаешься на сохранение игровых действий и времени без имени и почты. Можно закончить в любой момент. Одна сессия длится не больше 15 минут активного времени.</p>
       </div>
-      <div class="intro-art"><div class="art-label"><span class="tiny-dot"></span> МЕДНАЯ ЛОЩИНА <span>№ 01</span></div><img src="mine.svg" alt="Небольшая шахта с медными кристаллами, деревянным входом и вагонеткой"><div class="art-foot"><span>Никакой спешки.<br><strong>Твой темп. Твой маршрут.</strong></span><svg><use href="#gem"/></svg></div></div>
+      <div class="intro-art map-intro-art">
+        <div class="art-label"><span class="tiny-dot"></span> ТВОЙ ПУТЬ ПОД ЗЕМЛЁЙ <span>№ 01</span></div>
+        <div id="intro-map" class="intro-map" aria-hidden="true"></div>
+        <div class="art-foot"><span>Каждая клетка — новый выбор.<br><strong>Исследуй шахту своим маршрутом.</strong></span><svg><use href="#gem"/></svg></div>
+      </div>
     </section>
     <section id="game" class="game" hidden>
       <div class="game-heading"><div><p class="eyebrow">ТВОЯ ЭКСПЕДИЦИЯ</p><h1 id="mine-name">Медная лощина</h1></div>
         <div class="stats"><div class="stat"><svg><use href="#coin"/></svg><span><strong id="wallet">0</strong><small>монет</small></span></div><div class="stat timer"><svg><use href="#clock"/></svg><span><strong id="timer">00:00</strong><small>в игре</small></span></div></div>
       </div>
       <div class="game-grid">
-        <div class="mine-card">
+        <div class="mine-card map-card">
           <div class="mine-card-top"><span id="mine-number" class="mine-number">УЧАСТОК 01</span><span class="condition"><i></i><span id="condition">Богатая жила</span></span></div>
-          <div id="scene" class="scene"><img src="mine.svg" alt="Текущая шахта"><div id="floats" aria-hidden="true"></div><span class="scene-badge" id="equipment-badge">Ручная добыча</span></div>
-          <div class="mine-action"><div><span class="muted-label">СЕЙЧАС ЗА УДАР</span><p class="yield"><span id="yield">6</span> <span>монет</span></p></div><button id="dig" class="primary dig-button"><svg><use href="#pick"/></svg> Добывать <span class="keycap">␣</span></button></div>
-          <div class="vein"><div class="vein-track"><span id="vein-fill"></span></div><p id="vein-note">Здесь ещё много руды.</p></div>
+          <div class="map-toolbar"><span><svg><use href="#cart"/></svg> КАРТА ШАХТЫ</span><span id="map-progress">Открыто 0 / 48</span></div>
+          <div class="map-wrap">
+            <div id="board" class="mine-map" role="group" aria-label="Карта шахты. Стрелки — выбор клетки, Enter или пробел — добыча."></div>
+            <div id="map-effects" aria-hidden="true"></div>
+          </div>
+          <div class="map-legend" aria-label="Обозначения карты">
+            <span><svg class="legend-crystal"><use href="#crystal"/></svg> Кристалл <b id="crystal-value">6</b></span>
+            <span><svg class="legend-ore"><use href="#ore"/></svg> Медь <b id="ore-value">5</b></span>
+            <span><svg><use href="#stone"/></svg> Порода <b>1</b></span>
+            <span><svg><use href="#rock"/></svg> Завал <b>0</b></span>
+          </div>
+          <p id="map-feedback" class="map-feedback" role="status">Начни с подсвеченных клеток у вагонетки.</p>
+          <div class="map-bottom"><span id="camp-name">Ручной инструмент</span><span>Золотая рамка — можно копать</span></div>
         </div>
         <aside class="sidebar">
-          <section class="equipment card"><p class="eyebrow">ОБОРУДОВАНИЕ</p><div class="equipment-heading"><span class="equipment-icon"><svg><use href="#pick"/></svg></span><div><h2 id="upgrade-title">Стальная кирка</h2><span id="upgrade-level">Улучшение 1 из 3</span></div></div><p id="upgrade-description">Ещё +1 монета за каждый удар в этой шахте.</p><button id="upgrade" class="secondary"><span>Улучшить</span><span id="upgrade-cost">18 ◈</span></button><p class="fineprint">Оборудование остаётся на этом участке. Доходность слева уже учитывает улучшения.</p></section>
-          <section id="next-card" class="next-card card"><p class="eyebrow">ВПЕРЕДИ НОВЫЙ УЧАСТОК</p><h2 id="next-name">Тихий грот</h2><p id="next-copy">Разведка откроет следующий участок после 12 ударов.</p><div class="next-yield"><strong>6</strong><span>монет за удар<br>на новом участке</span></div><button id="move" class="secondary" disabled><span>Перейти бесплатно</span><svg><use href="#arrow"/></svg></button><p class="fineprint">Монеты сохраняются. В новой шахте начинаешь с ручного инструмента.</p></section>
+          <section class="equipment card"><p class="eyebrow">ОБОРУДОВАНИЕ</p><div class="equipment-heading"><span class="equipment-icon"><svg><use href="#pick"/></svg></span><div><h2 id="upgrade-title">Стальная кирка</h2><span id="upgrade-level">Улучшение 1 из 3</span></div></div><p id="upgrade-description">Открывает каменные завалы. Ещё +1 монета за руду и кристаллы.</p><button id="upgrade" class="secondary"><span>Улучшить</span><span id="upgrade-cost">18 ◈</span></button><div id="camp" class="camp" aria-label="Оборудование шахты"><span data-camp="1"><svg><use href="#pick"/></svg></span><span data-camp="2"><svg><use href="#lamp"/></svg></span><span data-camp="3"><svg><use href="#drill"/></svg></span></div><p class="fineprint">Инструменты и построенные проходы остаются в этой шахте.</p></section>
+          <section id="next-card" class="next-card card"><p class="eyebrow">ВПЕРЕДИ НОВЫЙ УЧАСТОК</p><h2 id="next-name">Тихий грот</h2><p id="next-copy">Откроется после 12 раскопанных клеток.</p><div class="next-yield"><strong>6</strong><span>монет за кристалл<br>сразу у входа</span></div><button id="move" class="secondary" disabled><span>Перейти бесплатно</span><svg><use href="#arrow"/></svg></button><p class="compare-line">Здесь до <strong id="current-best">6</strong> монет за клетку.</p><p class="fineprint">Свежая карта, ручной инструмент. Монеты сохраняются.</p></section>
           <button id="finish" class="finish-button">Закончить экспедицию <span aria-hidden="true">↗</span></button>
         </aside>
       </div>
-      <p class="play-note">У каждой жилы свой запас. Доход меняется только от добычи и улучшений. Скрытых наград нет.</p>
+      <p class="play-note">Вся руда видна на карте. Доход снижается после каждых 12 раскопок. Скрытых наград нет.</p>
       <div id="live" class="sr-only" role="status" aria-live="polite"></div>
     </section>
     <section id="result" class="result" hidden>
